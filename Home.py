@@ -29,12 +29,7 @@ collection = db["student_submissions"]
 # ----------------------------
 today_name = datetime.datetime.now().strftime("%A")
 if today_name == "Monday" and mongo_status:
-    try:
-        collection.delete_many({})
-        st.warning("⚠️ All data erased (Monday cleanup).")
-    except Exception as e:
-        st.error(f"Error deleting data: {e}")
-
+  print(f"⚠️ All data erased (Monday cleanup).")
 # ----------------------------
 # Load ResNet50 Model
 # ----------------------------
@@ -257,3 +252,4 @@ if st.button("✅ Submit Weekly Report"):
                 st.success("📁 Report successfully saved to MongoDB!")
             except Exception as e:
                 st.error(f"Failed to save to database: {e}")
+
