@@ -5,6 +5,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
+import datetime
 
 # ----------------------------
 # MongoDB Connection
@@ -22,6 +23,17 @@ except Exception as e:
 
 db = client["weekly_reports"]
 collection = db["student_submissions"]
+
+# ----------------------------
+# Auto-delete all data on Monday
+# ----------------------------
+today_name = datetime.datetime.now().strftime("%A")
+if today_name == "Monday" and mongo_status:
+    try:
+        collection.delete_many({})
+        st.warning("⚠️ All data erased (Monday cleanup).")
+    except Exception as e:
+        st.error(f"Error deleting data: {e}")
 
 # ----------------------------
 # Load ResNet50 Model
@@ -88,13 +100,13 @@ activity_keywords = {
     "Indoor Activity": [
         "reading", "storybook", "storybook illustrations", "bookshelf", "bookshop", "study table", "notebook",
         "floor mat", "indoor", "indoor swing", "lego", "building blocks", "construction toy", "doll", "dollhouse",
-        "toy car", "action figure", "teddy bear", "plushie", "plush", "indoor ball", "foam blocks", "tent", 
-        "indoor tunnel", "magnetic tiles", "rainy day", "couch", "lamp", "kids table", "indoor setup", 
+        "toy car", "action figure", "teddy bear", "plushie", "plush", "indoor ball", "foam blocks", "tent",
+        "indoor tunnel", "magnetic tiles", "rainy day", "couch", "lamp", "kids table", "indoor setup",
         "quiet play", "toy kitchen", "mini tools", "train set", "train_set", "busy board", "quiet book",
         "bouncy castle", "book", "story", "toyshop", "pencil_box"
     ],
     "Sports": [
-        "soccer", "football", "basketball", "cricket", "tennis", "badminton", "baseball", "volleyball", 
+        "soccer", "football", "basketball", "cricket", "tennis", "badminton", "baseball", "volleyball",
         "golf", "table tennis", "ping pong", "ping-pong_ball", "net", "bat", "ball", "jersey", "sports shoes",
         "sportswear", "sports", "coach", "team match", "scoreboard", "sports court", "stadium", "goalpost",
         "referee", "trophy", "tennis racket", "sports bag", "glove", "kick", "pass", "dribble", "catch", "serve",
